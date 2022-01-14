@@ -1,5 +1,7 @@
 package com.example.Tp1JEE;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +40,8 @@ public class Vehicule {
         Marque = marque;
     }
 
-    @OneToMany(mappedBy = "vehicule")
+    @OneToMany(mappedBy = "vehicule", cascade = CascadeType.ALL)
+    @JsonIgnore
     public List<Rent> getRent() {
         return rent;
     }

@@ -10,8 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
 public class SecondWebService {
+
+
 
 	/**
 	 * pour le request param : http://localhost:8080/voitures?marque=ferrari

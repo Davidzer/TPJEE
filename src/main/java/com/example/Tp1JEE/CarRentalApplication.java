@@ -19,6 +19,26 @@ public class CarRentalApplication {
 	}
 
 	@Bean
+	public CommandLineRunner Test(VehiculeRepository vehic){
+		return args -> {
+
+			Van van1 = new Van();
+			van1.setPlateNumber("68DE89");
+			van1.setMarque("Renault");
+			van1.setMaxWeight(1500);
+
+			Car car1 = new Car();
+			car1.setPlateNumber("25AS52");
+			car1.setMarque("Peugeot");
+			car1.setNumberOfSeats(5);
+
+			vehic.save(car1);
+			vehic.save(van1);
+
+		};
+	}
+
+	@Bean
 	public CommandLineRunner demo(RentRepository repository){
 
 
@@ -37,10 +57,14 @@ public class CarRentalApplication {
 		car.setMarque("Ferrari");
 		car.setNumberOfSeats(5);
 
+
+
 		Van van = new Van();
 		van.setPlateNumber("55EE88");
 		van.setMarque("Volkswagen");
 		van.setMaxWeight(500);
+
+
 
 
 		Date date1 = simpleDateFormat.parse("21-05-2021");
@@ -69,6 +93,7 @@ public class CarRentalApplication {
 
 		repository.save(rent);
 		repository.save(rent1);
+
 	};
 
 	}

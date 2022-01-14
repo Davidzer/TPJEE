@@ -1,5 +1,7 @@
 package com.example.Tp1JEE;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +26,7 @@ public class Person {
     }
 
     @OneToMany(mappedBy = "person")
+    @JsonIgnore
     public List<Rent> getRent() {
         return rent;
     }
@@ -43,5 +46,9 @@ public class Person {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public String toString(){
+        return ("Cette personne s'appelle " + getNom());
     }
 }
