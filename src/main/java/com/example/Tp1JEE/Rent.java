@@ -48,7 +48,7 @@ public class Rent {
         this.finDate = finDate;
     }
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     public Vehicule getVehicule() {
         return vehicule;
     }

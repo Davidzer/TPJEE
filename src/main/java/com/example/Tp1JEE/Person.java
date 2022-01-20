@@ -49,6 +49,6 @@ public class Person {
     }
 
     public String toString(){
-        return ("Cette personne s'appelle " + getNom());
+        return (getNom());
     }
 }

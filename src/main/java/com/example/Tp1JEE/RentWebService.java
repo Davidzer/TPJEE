@@ -17,7 +17,6 @@ public class RentWebService {
 
     RentRepository rent;
     VehiculeRepository vehic;
-    PersonRepository per;
 
     @Autowired
     public RentWebService(RentRepository rent, VehiculeRepository vehic){
@@ -149,70 +148,75 @@ public class RentWebService {
 
     @PutMapping("/rent/{plateNumber}")
     @ResponseStatus(HttpStatus.OK)
-    public void rentCar(@PathVariable("plateNumber") String plateNumber, @RequestParam(value = "rentB", required = true) boolean rentB, @RequestBody(required = false) String debut, @RequestBody(required = false) String fin, @RequestBody(required = false) Person person ){
+    public void rentCar(@PathVariable("plateNumber") String plateNumber, @RequestParam(value = "rentB", required = true) boolean rentB, @RequestBody(required = false) NewRent newRent) throws Exception {
 
 
-        Rent re = new Rent();
-        if (rentB) {
-            System.out.println(fin);
-            System.out.println(person);
+        try {
+
+            Rent re = new Rent();
+            if (rentB && newRent != null) {
 
 
-        for (Rent r : rent.findAll()) {
+
+                for (Rent r : rent.findAll()) {
 
 
-                if (r.getVehicule().getPlateNumber().equals(plateNumber))
-                {
-                    System.out.println("la voiture est déja louer");
-                    break;
-                }
+                    if (r.getVehicule().getPlateNumber().equals(plateNumber)) {
+                        System.out.println("la voiture est déja louer");
+                        break;
+                    } else if (newRent.getDebut() == null || newRent.getFin() == null || newRent.getPerson() == null) {
+                        System.out.println("Merci de renseigner les dates de la location et la personne qui réalise la location");
+                        break;
+                    } else {
 
-                else if (debut == null || fin == null) {
-                            System.out.println("Merci de renseigner les dates de la location");
-                            break;
-                        } else {
+                        Optional<Vehicule> o = vehic.findById(plateNumber);
+                        Vehicule car = (Vehicule) o.get();
 
-                            Optional <Vehicule> o = vehic.findById(plateNumber);
-                            Vehicule car = (Vehicule) o.get();
-                    try {
-                        re.setDebutDate(simpleDateFormat.parse(debut));
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        re.setFinDate(simpleDateFormat.parse(fin));
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                    re.setPerson(person);
-                            re.setVehicule(car);
-                            rent.save(re);
-                            System.out.println(re.getDebutDate());
-                            System.out.println(re.getFinDate());
-                            System.out.println(re.getVehicule());
-                            System.out.println(re.getPerson());
-                            System.out.println("la voiture est maintenant loué");
+                        try {
+                            re.setDebutDate(simpleDateFormat.parse(newRent.getDebut()));
+                        } catch (ParseException e) {
+                            e.printStackTrace();
                         }
-
+                        try {
+                            re.setFinDate(simpleDateFormat.parse(newRent.getFin()));
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        re.setPerson(newRent.getPerson());
+                        re.setVehicule(car);
+                        rent.save(re);
+                        System.out.println("la voiture "+ plateNumber +" est maintenant loué du " + re.getDebutDate() + " au " + re.getFinDate() + " par " + re.getPerson());
+                        break;
                     }
 
-                }
-        if (!rentB)
-        {
-            boolean sup = true;
-            for (Rent r : rent.findAll()) {
-                if (r.getVehicule().getPlateNumber().equals(plateNumber))
-                {
-                    rent.delete(r);
-                    System.out.println("la location de la voiture a été supprimer");
-                    sup = false;
-                }
-                else if(sup)
-                {
-                    System.out.println("Aucune voiture " + plateNumber + " est en location.");
                 }
 
             }
+            if (!rentB) {
+
+                Rent suprent = new Rent();
+                suprent = null;
+                for (Rent r : rent.findAll()) {
+                    if (r.getVehicule().getPlateNumber().equals(plateNumber)) {
+                        suprent = r;
+
+                    }
+
+                }
+                if (suprent != null){
+                    rent.delete(suprent);
+                    System.out.println("la voiture " + plateNumber + " n'est plus en location");
+                }
+                else {
+                    System.out.println("Aucune voiture " + plateNumber + " est en location");
+                }
+            }
+        }
+        catch(Exception e)
+        {
+            System.out.println(e);
+
         }
     }
+
 }
