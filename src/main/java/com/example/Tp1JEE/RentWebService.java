@@ -1,13 +1,14 @@
 package com.example.Tp1JEE;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Iterator;
-import java.util.Optional;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 public class RentWebService {
@@ -60,7 +61,7 @@ public class RentWebService {
 
     }
 
-    @RequestMapping(value = "/cars/{plateNumber}", method = RequestMethod.PUT)
+ /**   @RequestMapping(value = "/cars/{plateNumber}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public void AddOrDelRent(@PathVariable("plateNumber") String plateNumber) throws Exception{
@@ -96,24 +97,122 @@ public class RentWebService {
         }
 
 
+    }**/
+
+    @RequestMapping(value = "/rent", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public Iterable<Rent> RentList() throws Exception{
+
+        try {
+
+            return rent.findAll();
+
+
+        }
+        catch (Exception e)
+        {
+            System.out.println(e);
+            return null;
+        }
+
     }
 
+    @RequestMapping(value = "/rent/{plateNumber}", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<Rent> CarsRented(@PathVariable ("plateNumber") String plateNumber) throws Exception{
+
+        try {
+            List<Rent> rented = new ArrayList<Rent>();
 
 
-    @GetMapping("/voitures/{prix}")
-    public Car getVoiture(@PathVariable(value = "prix") int price) {
-        System.out.println(price);
-        return new Car("DD55FF", "Fiat", price);
+            for (Rent r: rent.findAll()) {
+                if (r.getVehicule().getPlateNumber().equals(plateNumber))
+                {
+                    rented.add(r);
+                }
+
+
+            }
+
+            return  rented;
+
+        }
+        catch (Exception e)
+        {
+            System.out.println(e);
+            return null;
+        }
+
     }
 
-    /**
-     * utiliser post man ou programmer
-     * @param car
-     */
+    @PutMapping("/rent/{plateNumber}")
+    @ResponseStatus(HttpStatus.OK)
+    public void rentCar(@PathVariable("plateNumber") String plateNumber, @RequestParam(value = "rentB", required = true) boolean rentB, @RequestBody(required = false) String debut, @RequestBody(required = false) String fin, @RequestBody(required = false) Person person ){
 
-    @DeleteMapping("/voitures")
-    public void delete(@RequestBody Car car) {
-        System.out.println(car);
+
+        Rent re = new Rent();
+        if (rentB) {
+            System.out.println(fin);
+            System.out.println(person);
+
+
+        for (Rent r : rent.findAll()) {
+
+
+                if (r.getVehicule().getPlateNumber().equals(plateNumber))
+                {
+                    System.out.println("la voiture est déja louer");
+                    break;
+                }
+
+                else if (debut == null || fin == null) {
+                            System.out.println("Merci de renseigner les dates de la location");
+                            break;
+                        } else {
+
+                            Optional <Vehicule> o = vehic.findById(plateNumber);
+                            Vehicule car = (Vehicule) o.get();
+                    try {
+                        re.setDebutDate(simpleDateFormat.parse(debut));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        re.setFinDate(simpleDateFormat.parse(fin));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    re.setPerson(person);
+                            re.setVehicule(car);
+                            rent.save(re);
+                            System.out.println(re.getDebutDate());
+                            System.out.println(re.getFinDate());
+                            System.out.println(re.getVehicule());
+                            System.out.println(re.getPerson());
+                            System.out.println("la voiture est maintenant loué");
+                        }
+
+                    }
+
+                }
+        if (!rentB)
+        {
+            boolean sup = true;
+            for (Rent r : rent.findAll()) {
+                if (r.getVehicule().getPlateNumber().equals(plateNumber))
+                {
+                    rent.delete(r);
+                    System.out.println("la location de la voiture a été supprimer");
+                    sup = false;
+                }
+                else if(sup)
+                {
+                    System.out.println("Aucune voiture " + plateNumber + " est en location.");
+                }
+
+            }
+        }
     }
-
 }
