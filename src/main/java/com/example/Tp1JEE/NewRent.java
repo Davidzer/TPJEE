@@ -4,15 +4,15 @@ public class NewRent {
 
     private String debut;
     private String fin;
-    private Person person;
+    private String Nom;
 
     public NewRent() {
     }
 
-    public NewRent(String debut, String fin, Person person) {
+    public NewRent(String debut, String fin, String nom) {
         this.debut = debut;
         this.fin = fin;
-        this.person = person;
+        this.Nom = nom;
     }
 
     public String getDebut() {
@@ -31,11 +31,11 @@ public class NewRent {
         this.fin = fin;
     }
 
-    public Person getPerson() {
-        return person;
+    public String getNom() {
+        return Nom;
     }
 
-    public void setPerson(Person person) {
-        this.person = person;
+    public void setNom(String nom) {
+        this.Nom = nom;
     }
 }

@@ -27,6 +27,7 @@ public class CarRentalApplication {
 			van1.setMarque("Renault");
 			van1.setMaxWeight(1500);
 
+
 			Car car1 = new Car();
 			car1.setPlateNumber("25AS52");
 			car1.setMarque("Peugeot");
@@ -34,6 +35,22 @@ public class CarRentalApplication {
 
 			vehic.save(car1);
 			vehic.save(van1);
+
+
+		};
+	}
+
+	@Bean
+	public CommandLineRunner Testpers( PersonRepository pers){
+		return args -> {
+
+
+
+			Person p = new Person("Jean", 30);
+			Person p1 = new Person("Loup", 50);
+
+			pers.save(p);
+			pers.save(p1);
 
 		};
 	}
